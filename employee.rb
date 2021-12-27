@@ -11,9 +11,19 @@ class Employee
         end 
     end
 
-    # def bonus(multiplier)
-    #     # if self.boss.nil?
-    # end 
+    def find_bonus(multiplier)
+            salary_sum = 0
+            return self.salary * multiplier if !self.is_a?(Manager)
+            self.employees.each do |employee|
+                if employee.is_a?(Manager) 
+                    salary_sum += employee.salary + employee.find_bonus(multiplier)
+                else
+                    salary_sum += employee.salary
+                end
+            end
+            bonus = salary_sum * multiplier
+            bonus
+    end 
 
     def add_employee
         self.boss.employees << self
