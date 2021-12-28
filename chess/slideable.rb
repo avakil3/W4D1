@@ -4,43 +4,48 @@ module Slideable
     # when a piece moves in a given direction, its row and/or its column should increment by some value
     # ex: A piece starts at position [1, 2] and it moves horizontally to the right
       # its position changes to [1,3]
-      # the row increases by 0 and the column increases by 1
+       # the row increases by 0 and the column increases by 1
   HORIZONTAL_DIRS = [
-    [:dx, :dy], # left
-    [:dx, :dy], # right
-    [:dx, :dy], # up (vertical)
-    [:dx, :dy]  # down (vertical)
+    [0, -1], # left
+    [0, 1], # right
+    [-1, 0], # up (vertical)
+    [1, 0]  # down (vertical)
   ].freeze
 
   # DIAGONAL_DIRS stores an array of diagonal directions
   DIAGONAL_DIRS = [
-    [:dx, :dy], # up + left
-    [:dx, :dy], # up + right
-    [:dx, :dy], # down + left
-    [:dx, :dy]  # down + right
+    [-1, -1], # up + left
+    [-1, 1], # up + right
+    [1, -1], # down + left
+    [1, 1]  # down + right
   ].freeze   # .freeze is a built in method that allows us to turn a value into constant
 
 
   def horizontal_dirs
     # getter for HORIZONTAL_DIRS
+    return HORIZONTAL_DIRS
   end
 
   def diagonal_dirs
     # getter for DIAGONAL_DIRS
+    return DIAGONAL_DIRS
   end
 
 
   # should return an array of places a Piece can move to
   def moves
     # create array to collect moves
-
+    possible_moves = []
     # iterate over each of the directions in which a slideable piece can move
       # use the Piece subclass' `#move_dirs` method to get this info
       # for each direction, collect all possible moves in that direction
         # and add them to your moves array 
         # (use the `grow_unblocked_moves_in_dir` helper method)
-
+    self.move_dirs.each do |possible_move|
+        possible_moves += grow_unblocked_moves_in_dir(possible_move[0], possible_move[1])
+    end 
     # return the final array of moves (containing all possible moves in all directions)
+    possible_moves
   end
 
 
@@ -56,9 +61,25 @@ module Slideable
   # the given direction is represented by two args, the combination of a dx and dy
   def grow_unblocked_moves_in_dir(dx, dy)
     # create an array to collect moves
-
+    moves = []
     # get the piece's current row and current column
+     loop do 
+        current_row = self.pos[0]
+        current_col = self.pos[1]
 
+        next_row = current_row + dx
+        next_col = current_col + dy
+
+        if !self.board.valid_pos?([next_row, next_col])
+            break
+        elsif self.board[[next_row, next_col]].is_a?(NullPiece)
+            moves << [next_row, next_col]
+        elsif self.board[[next_row, next_col]].color != self.color
+           moves << [next_row, next_col]
+        elsif self.board[[next_row, next_col]].color == self.color
+           break
+        end 
+     end 
     # in a loop:
       # continually increment the piece's current row and current column to generate a new position
       # stop looping if the new position is invalid (not on the board); the piece can't move in this direction
@@ -66,7 +87,7 @@ module Slideable
       # if the new position is occupied with a piece of the opposite color, the piece can move here (to capture the opposing piece), so add the new position to the moves array
         # but, the piece cannot continue to move past this piece, so stop looping
       # if the new position is occupied with a piece of the same color, stop looping
-
+     moves
     # return the final moves array
   end
 end
