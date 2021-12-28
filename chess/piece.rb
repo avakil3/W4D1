@@ -2,18 +2,16 @@ require "byebug"
 
 class Piece
     
-    attr_accessor :type, :color
-    def initialize(type,color)
-        @type = type # King, Queen, Bishop...
-        @color = color
+    attr_accessor :color, :pos
+
+    def initialize(color,board,pos)
+      @color = color
+      @board = board
+      @pos = pos
+      
     end
 
+  
+
 end
 
-class NullPiece < Piece
-    attr_accessor :type, :color
-  def initialize(type)
-    #debugger
-    super
-  end
-end
